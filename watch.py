@@ -1,12 +1,12 @@
 import time
 from stopwatch import Stopwatch
-from alarm import Alarm
+from alarm import AlarmApp
 
 
-alarm = Alarm()
+alarm = AlarmApp()
+stopwatch = Stopwatch()
 
 def handle_stopwatch():
-    stopwatch = Stopwatch()
     while True:
         print()
         key = input("명령어 입력 (s: 시작, q: 중지, r: 초기화, l: 랩 기록, e: 종료) > ").strip().lower()
@@ -15,8 +15,10 @@ def handle_stopwatch():
         elif key == 'r': stopwatch.reset()
         elif key == 'l': stopwatch.record_lap()
         elif key == 'e':
-            print("\n프로그램을 종료합니다.")
+            stopwatch.reset()
+            print("프로그램을 종료합니다.")
             break
+        else: print('\033[A\033[A\033[A')
 
 def handle_alarm():
     while True:
@@ -25,29 +27,28 @@ def handle_alarm():
             try:
                 hours   = int(input("시간 (시): "))
                 minutes = int(input("시간 (분): "))
-                seconds = int(input("시간 (초): "))
                 message = input("알람 메시지: ")
-                alarm.add_alarm(hours, minutes, seconds, message)
+                alarm.add_alarm(hours, minutes, message)
             except ValueError:
                 print("❌ 올바른 숫자를 입력하세요.")
         elif key == 'v':  # 알람 보기            
             alarm.show_alarms()
         elif key == 'd':  # 알람 삭제
-            alarm.show_alarms()
-            try:
-                index = int(input("삭제할 알람 번호 입력: ")) - 1
-                alarm.remove_alarm(index)
-            except ValueError:
-                print("❌ 올바른 숫자를 입력하세요.")
+            if alarm.show_alarms(): 
+                try:
+                    index = int(input("삭제할 알람 번호 입력: ")) - 1
+                    alarm.remove_alarm(index)
+                except ValueError:
+                    print("❌ 올바른 숫자를 입력하세요.")
         elif key == 'e':  # 종료
             print("\n알람 관리 종료")
             break
 
 def handle_timer():
     try:
-        hours = int(input("시간 (시): "))
-        minutes = int(input("시간 (분): "))
-        seconds = int(input("시간 (초): "))
+        hours = int(input("시간 (시): ") or 0)
+        minutes = int(input("시간 (분): ") or 0)
+        seconds = int(input("시간 (초): ") or 0)
     except ValueError:
         print("❌ 올바른 숫자를 입력하세요.")
         return
@@ -82,6 +83,7 @@ def main():
             break
         else:
             print("❌ 올바른 번호를 입력하세요.")
+            
 
 if __name__ == "__main__":
     main()
